@@ -1,7 +1,9 @@
 from flask import request, render_template, redirect, url_for, flash
 from app import app, db
 from app.models import Video, Rating, User
+from app.forms import RegistrationForm, VideoForm
 from flask_login import current_user, login_user, logout_user, login_required
+from flask_bcrypt import Bcrypt
 
 
 @app.route('/')
@@ -9,7 +11,6 @@ def index():
     return render_template('base.html')
 
 @app.route('/browse', methods=['GET'])
-@login_required
 def browse_videos():
     page = request.args.get('page', 1, type=int)
     videos = Video.query.filter_by(hidden=False).paginate(page=page, per_page=10)
@@ -65,3 +66,90 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/admin/videos', methods=['GET'])
+@login_required
+def admin_videos():
+    if not current_user.is_admin:  # Assuming you have an 'is_admin' flag in your User model
+        flash("You don't have permission to access this page.")
+        return redirect(url_for('index'))
+    
+    videos = Video.query.all()  # Fetch all videos from the database
+    return render_template('admin/admin_videos.html', videos=videos)
+
+@app.route('/admin/videos/manage', methods=['GET', 'POST'])
+@login_required
+def manage_videos():
+    if not current_user.is_admin:
+        flash("You don't have permission to access this page.")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        # Handling video addition or deletion
+        if 'add_video' in request.form:
+            title = request.form['title']
+            description = request.form['description']
+            url = request.form['url']  # Assuming you're storing video URLs
+            new_video = Video(title=title, description=description, url=url)
+            db.session.add(new_video)
+            db.session.commit()
+            flash('Video added successfully!')
+        elif 'delete_video' in request.form:
+            video_id = request.form['video_id']
+            video = Video.query.get(video_id)
+            if video:
+                db.session.delete(video)
+                db.session.commit()
+                flash('Video deleted successfully!')
+    
+    videos = Video.query.all()
+    return render_template('admin/manage_videos.html', videos=videos)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    bcrypt = Bcrypt()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password_hash=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html', user=current_user)
+
+import os
+from werkzeug.utils import secure_filename
+
+ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/account/add_video', methods=['GET', 'POST'])
+@login_required
+def add_video():
+    form = VideoForm()
+    if form.validate_on_submit():
+        if form.file_path.data and allowed_file(form.file_path.data.filename):
+            filename = secure_filename(form.file_path.data.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            print(f"file_path: {file_path} and filename: {filename}")
+            form.file_path.data.save(file_path)
+
+            video = Video(
+                title=form.title.data,
+                description=form.description.data,
+                file_path=file_path,
+                user_id=current_user.id  # Assuming a user_id field in Video model
+            )
+            db.session.add(video)
+            db.session.commit()
+            flash('Video added successfully!', 'success')
+            return redirect(url_for('account'))
+
+    return render_template('add_video.html', form=form)

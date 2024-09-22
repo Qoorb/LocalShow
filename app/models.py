@@ -3,6 +3,7 @@ from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 
+
 bcrypt = Bcrypt()
 
 class Video(db.Model):
@@ -15,9 +16,11 @@ class Video(db.Model):
     hidden = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(50), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     # Relationship with Rating
     ratings = db.relationship('Rating', backref='video', lazy='dynamic')
+    user = db.relationship('User', back_populates='videos')
     
     def __repr__(self):
         return f'<Video {self.title}>'
@@ -34,6 +37,7 @@ class User(UserMixin, db.Model):
 
     # Relationship with Rating and Log
     ratings = db.relationship('Rating', backref='user', lazy='dynamic')
+    videos = db.relationship('Video', back_populates='user', lazy='dynamic')
     logs = db.relationship('Log', backref='user', lazy='dynamic')
     
     def set_password(self, password):

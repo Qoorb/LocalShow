@@ -3,32 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Library</title>
+    <title>{{ title if title else "Video Library" }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Video Library</h1>
-        <nav>
-            <a href="{{ url_for('browse_videos') }}">Browse Videos</a>
-            <a href="{{ url_for('filter_videos') }}">Filter Videos</a>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('browse_videos') }}">Browse Videos</a></li>
+            <li><a href="{{ url_for('filter_videos') }}">Filter Videos</a></li>
             {% if current_user.is_authenticated %}
-                <span>Logged in as {{ current_user.username }}</span>
-                <a href="{{ url_for('logout') }}">Logout</a>
+                <li><a href="{{ url_for('account') }}">Account</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
-        </nav>
-    </header>
-
-    <main>
-        {% block content %}
-        <!-- Default content can go here if needed -->
-        {% endblock %}
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Video Library</p>
-    </footer>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>
