@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Filter Videos</h2>
+<form method="GET" action="{{ url_for('filter_videos') }}">
+    <label for="category">Category:</label>
+    <select name="category" id="category">
+        <option value="" {% if not category %}selected{% endif %}>All</option>
+        <option value="music" {% if category == 'music' %}selected{% endif %}>Music</option>
+        <option value="sports" {% if category == 'sports' %}selected{% endif %}>Sports</option>
+        <option value="news" {% if category == 'news' %}selected{% endif %}>News</option>
+        <!-- Add more categories as needed -->
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<div class="video-list">
+    {% for video in videos.items %}
+    <div class="video-item">
+        <h3>{{ video.title }}</h3>
+        <p>{{ video.description }}</p>
+        <video width="320" height="240" controls>
+            <source src="{{ video.file_path }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">
+            <button type="submit" name="like" value="true">👍</button>
+            <button type="submit" name="like" value="false">👎</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if videos.has_prev %}
+        <a href="{{ url_for('filter_videos', page=videos.prev_num, category=category) }}">Previous</a>
+    {% endif %}
+    {% if videos.has_next %}
+        <a href="{{ url_for('filter_videos', page=videos.next_num, category=category) }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}
