@@ -1,30 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Browse Videos</h2>
-<div class="video-list">
+<h2>Обзор Видео</h2>
+<div class="video-grid">
     {% for video in videos.items %}
     <div class="video-item">
-        <h3>{{ video.title }}</h3>
-        <p>{{ video.description }}</p>
-        <video width="320" height="240" controls>
-            <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">
-            <button type="submit" name="like" value="true">👍</button>
-            <button type="submit" name="like" value="false">👎</button>
-        </form>
+        <div class="video-thumbnail">
+            <video muted>
+                <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+            <div class="video-overlay">
+                <a href="{{ url_for('video_view', video_id=video.id) }}" class="watch-button">Смотреть</a>
+            </div>
+        </div>
+        <div class="video-info">
+            <h3>{{ video.title }}</h3>
+            <p>{{ video.description }}</p>
+            <p><strong>Категория:</strong> {{ video.category.name }}</p>
+            <div class="video-actions">
+                <span>👍 {{ video.likes or 0 }}</span>
+                <span>👎 {{ video.dislikes or 0 }}</span>
+            </div>
+        </div>
     </div>
     {% endfor %}
 </div>
 
 <div class="pagination">
     {% if videos.has_prev %}
-        <a href="{{ url_for('browse_videos', page=videos.prev_num) }}">Previous</a>
+        <a href="{{ url_for('browse_videos', page=videos.prev_num) }}" class="pagination-btn">Предыдущие</a>
     {% endif %}
     {% if videos.has_next %}
-        <a href="{{ url_for('browse_videos', page=videos.next_num) }}">Next</a>
+        <a href="{{ url_for('browse_videos', page=videos.next_num) }}" class="pagination-btn">Следующие</a>
     {% endif %}
 </div>
 {% endblock %}

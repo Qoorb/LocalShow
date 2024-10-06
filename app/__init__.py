@@ -8,8 +8,12 @@ import os
 app = Flask(__name__, static_folder='static')
 app.config.from_object('config.Config')
 
-UPLOAD_FOLDER = os.path.normpath('app\\static\\video')
+# Папка для загрузки видео
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'video')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Создание директории, если она не существует
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

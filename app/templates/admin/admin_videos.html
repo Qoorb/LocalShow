@@ -1,18 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Video Catalog (Admin)</h2>
+<h2>Каталог видео (Админ)</h2>
 <table>
     <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Visibility</th>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Статус</th>
+        <th>Действия</th>
     </tr>
     {% for video in videos %}
     <tr>
         <td>{{ video.title }}</td>
         <td>{{ video.description }}</td>
-        <td>{{ 'Visible' if video.is_visible else 'Hidden' }}</td>
+        <td>{{ 'Скрыто' if video.hidden else 'Отображается' }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('admin_videos') }}">
+                <input type="hidden" name="video_id" value="{{ video.id }}">
+                <button type="submit" class="btn">
+                    {{ 'Показать' if video.hidden else 'Скрыть' }}
+                </button>
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>

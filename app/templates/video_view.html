@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="video-view-container">
+    <h2>{{ video.title }}</h2>
+    <div class="video-player">
+        <video width="800" height="450" controls>
+            <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+    <p>{{ video.description }}</p>
+    
+    <div class="video-rating">
+        <span>Лайки: {{ likes }}</span>
+        <span>Дизлайки: {{ dislikes }}</span>
+        <span>Всего оценок: {{ total_ratings }}</span>
+    </div>
+    
+    <div class="rating-buttons">
+        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">
+            <button type="submit" name="like" value="true" class="like-btn">👍 Лайк</button>
+            <button type="submit" name="like" value="false" class="dislike-btn">👎 Дизлайк</button>
+        </form>
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('browse_videos') }}">← Назад к обзору видео</a>
+    </div>
+</div>
+{% endblock %}

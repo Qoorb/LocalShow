@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FileField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from app.models import User
-from flask_wtf.file import FileField, FileAllowed
+from app.models import User, Category
+from flask_wtf.file import FileAllowed
 
 
 class RegistrationForm(FlaskForm):
@@ -24,7 +24,12 @@ class RegistrationForm(FlaskForm):
 
 
 class VideoForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(max=120)])
-    description = TextAreaField('Description', validators=[Length(max=500)])
-    file_path = FileField('Upload Video', validators=[DataRequired(), FileAllowed(['mp4', 'avi', 'mov'], 'Videos only!')])
-    submit = SubmitField('Add Video')
+    title = StringField('Название', validators=[DataRequired()])
+    description = TextAreaField('Описание', validators=[DataRequired()])
+    file_path = FileField('Загрузить Видео', validators=[DataRequired()])
+    category = SelectField('Категория', choices=[], coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Добавить Видео')
+
+    def __init__(self, *args, **kwargs):
+        super(VideoForm, self).__init__(*args, **kwargs)
+        self.category.choices = [(category.id, category.name) for category in Category.query.order_by('name')]

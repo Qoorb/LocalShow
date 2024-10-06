@@ -1,160 +1,175 @@
-/* General reset for margin and padding */
+/* Общий сброс отступов и полей */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body Styling */
+/* Стиль тела страницы */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: 'Roboto', sans-serif;
+    background-color: #ffffff;
+    color: #2c3e50;
     line-height: 1.6;
-    padding: 20px;
+    padding: 40px 20px;
 }
 
-/* Container for centering content */
+/* Контейнер для центрирования контента */
 .container {
-    max-width: 1200px;
-    margin: auto;
+    max-width: 1000px;
+    margin: 0 auto;
     padding: 20px;
 }
 
-/* Navigation Bar */
+/* Навигационная панель */
 nav {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    justify-content: space-between;
-}
-
-nav ul li {
-    display: inline;
+    justify-content: center;
+    gap: 20px;
 }
 
 nav ul li a {
-    color: #fff;
+    color: #ecf0f1;
     text-decoration: none;
-    padding: 10px;
-    border-radius: 3px;
-    transition: background 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 nav ul li a:hover {
-    background-color: #555;
+    background-color: #2ecc71;
+    color: #ffffff;
 }
 
-/* Form Styling */
+/* Стиль форм */
 form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 form div {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 form div label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #34495e;
 }
 
-form div input, form div select {
+form div input, form div select, form div textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
 }
 
-form div input[type="submit"] {
-    background-color: #333;
-    color: #fff;
+form div input:focus, form div select:focus, form div textarea:focus {
+    border-color: #2ecc71;
+    outline: none;
+}
+
+form div input[type="submit"], form div button {
+    background-color: #2ecc71;
+    color: #ffffff;
     border: none;
     cursor: pointer;
     transition: background 0.3s ease;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: bold;
 }
 
-form div input[type="submit"]:hover {
-    background-color: #555;
+form div input[type="submit"]:hover, form div button:hover {
+    background-color: #27ae60;
 }
 
-/* Video Thumbnail Grid */
+/* Сетка миниатюр видео */
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
 }
 
-.video-grid img {
+.video-grid img, .video-grid video {
     width: 100%;
-    border-radius: 5px;
-    transition: transform 0.3s ease;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.video-grid img:hover {
+.video-grid img:hover, .video-grid video:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Admin Links */
+/* Ссылки для администраторов */
 .admin-links {
-    margin-top: 20px;
+    margin-top: 30px;
+    text-align: center;
 }
 
 .admin-links a {
     display: inline-block;
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 6px;
     text-decoration: none;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .admin-links a:hover {
-    background-color: #555;
+    background-color: #c0392b;
+    transform: translateY(-2px);
 }
 
-/* Account Page Styles */
+/* Стиль страницы аккаунта */
 .account-page {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .account-header h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: 25px;
+    color: #2c3e50;
 }
 
 .account-info, .admin-options {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .account-info h3, .admin-options h3 {
-    color: #666;
-    margin-bottom: 10px;
+    color: #34495e;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 6px;
 }
 
 .account-info p {
-    font-size: 16px;
-    color: #444;
-    line-height: 1.6;
+    font-size: 18px;
+    color: #2c3e50;
+    line-height: 1.8;
 }
 
 .admin-options ul {
@@ -163,19 +178,317 @@ form div input[type="submit"]:hover {
 }
 
 .admin-options li {
-    margin: 10px 0;
+    margin: 12px 0;
 }
 
 .btn-admin {
     display: inline-block;
     padding: 10px 15px;
-    color: #fff;
-    background-color: #007bff;
-    border-radius: 4px;
+    background-color: #2ecc71;
+    color: #ffffff;
+    border-radius: 5px;
     text-decoration: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .btn-admin:hover {
-    background-color: #0056b3;
+    background-color: #27ae60;
+}
+
+/* Кнопки */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Стиль списка видео на странице фильтрации */
+.video-list .video-item {
+    background-color: #fdfdfd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.video-list .video-item:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.pagination a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.pagination a:hover {
+    color: #2980b9;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.btn-admin {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #2ecc71;
+    color: #ffffff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-admin:hover {
+    background-color: #27ae60;
+}
+
+/* Карточки видео */
+.video-item {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Превью видео */
+.video-thumbnail {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Соотношение сторон 16:9 */
+    overflow: hidden;
+}
+
+.video-thumbnail video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.video-thumbnail:hover video {
+    opacity: 0.7;
+}
+
+/* Наложение и кнопка "Смотреть" */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.video-thumbnail:hover .video-overlay {
+    opacity: 1;
+}
+
+.watch-button {
+    background-color: #e74c3c;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.watch-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+/* Информация о видео */
+.video-info {
+    padding: 15px;
+}
+
+.video-info h3 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.video-info p {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    height: 40px;
+    overflow: hidden;
+}
+
+/* Действия с видео */
+.video-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.video-actions span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.like-btn, .dislike-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.like-btn:hover, .dislike-btn:hover {
+    transform: scale(1.2);
+}
+
+.like-btn {
+    color: #2ecc71;
+}
+
+.dislike-btn {
+    color: #e74c3c;
+}
+
+/* Кнопки пагинации */
+.pagination-btn {
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .video-info p {
+        height: auto;
+    }
+}
+
+/* Добавить стили для страницы просмотра видео */
+
+.video-view-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.video-player {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.video-info {
+    margin-bottom: 20px;
+}
+
+.video-rating {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.rating-buttons {
+    margin-bottom: 20px;
+}
+
+.like-btn, .dislike-btn {
+    background-color: #2ecc71;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.dislike-btn {
+    background-color: #e74c3c;
+}
+
+.like-btn:hover {
+    background-color: #27ae60;
+}
+
+.dislike-btn:hover {
+    background-color: #c0392b;
+}
+
+.back-link a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.back-link a:hover {
+    color: #2980b9;
 }

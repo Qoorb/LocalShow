@@ -10,17 +10,25 @@ class Video(db.Model):
     __tablename__ = 'videos'
     
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.String(500), nullable=True)
-    file_path = db.Column(db.String(200), nullable=False)  # Должен быть относительный путь
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500))
+    file_path = db.Column(db.String(100), nullable=False)  # Относительный путь к файлу
     hidden = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    category = db.Column(db.String(50), nullable=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    # Relationship with Rating
+    # Связь с оценками
     ratings = db.relationship('Rating', backref='video', lazy='dynamic', cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='videos')
+    
+    @property
+    def likes(self):
+        return self.ratings.filter_by(like=True).count()
+    
+    @property
+    def dislikes(self):
+        return self.ratings.filter_by(like=False).count()
     
     def __repr__(self):
         return f'<Video {self.title}>'
@@ -73,3 +81,14 @@ class Log(db.Model):
     
     def __repr__(self):
         return f'<Log {self.timestamp}: {self.action} by User {self.user_id}>'
+
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    videos = db.relationship('Video', backref='category', lazy=True)
+    
+    def __repr__(self):
+        return f'<Category {self.name}>'

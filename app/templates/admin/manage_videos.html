@@ -1,31 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Manage Videos (Admin)</h2>
+<h2>Управление Видео (Админ)</h2>
 
-<h3>Add New Video</h3>
-<form method="POST">
-    <label for="title">Title:</label>
+<h3>Добавить Новое Видео</h3>
+<form method="POST" enctype="multipart/form-data">
+    <label for="title">Название:</label>
     <input type="text" name="title" required>
     
-    <label for="description">Description:</label>
+    <label for="description">Описание:</label>
     <textarea name="description" required></textarea>
     
-    <label for="url">Video URL:</label>
-    <input type="text" name="url" required>
+    <label for="file_path">Загрузить Видео:</label>
+    <input type="file" name="file_path" accept="video/mp4,video/avi,video/mov" required>
     
-    <button type="submit" name="add_video">Add Video</button>
+    <button type="submit" name="add_video">Добавить Видео</button>
 </form>
 
-<h3>Delete Video</h3>
+<h3>Удалить Видео</h3>
 <form method="POST">
-    <label for="video_id">Video ID:</label>
+    <label for="video_id">ID Видео:</label>
     <select name="video_id" required>
         {% for video in videos %}
-        <option value="{{ video.id }}">{{ video.title }}</option>
+        <option value="{{ video.id }}">{{ video.id }} - {{ video.title }}</option>
         {% endfor %}
     </select>
     
-    <button type="submit" name="delete_video">Delete Video</button>
+    <button type="submit" name="delete_video">Удалить Видео</button>
 </form>
 {% endblock %}

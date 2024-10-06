@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Рейтинги видео (Админ)</h2>
+<table>
+    <tr>
+        <th>ID Видео</th>
+        <th>Название Видео</th>
+        <th>Общее количество рейтингов</th>
+        <th>Лайки 👍</th>
+        <th>Дизлайки 👎</th>
+    </tr>
+    {% for rating in ratings %}
+    <tr>
+        <td>{{ rating.id }}</td>
+        <td>{{ rating.title }}</td>
+        <td>{{ rating.total_ratings or 0 }}</td>
+        <td>{{ rating.likes or 0 }}</td>
+        <td>{{ rating.dislikes or 0 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

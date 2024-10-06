@@ -1,42 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Filter Videos</h2>
+<h2>Фильтр Видео</h2>
 <form method="GET" action="{{ url_for('filter_videos') }}">
-    <label for="category">Category:</label>
+    <label for="category">Категория:</label>
     <select name="category" id="category">
-        <option value="" {% if not category %}selected{% endif %}>All</option>
-        <option value="music" {% if category == 'music' %}selected{% endif %}>Music</option>
-        <option value="sports" {% if category == 'sports' %}selected{% endif %}>Sports</option>
-        <option value="news" {% if category == 'news' %}selected{% endif %}>News</option>
-        <!-- Add more categories as needed -->
+        <option value="" {% if not category %}selected{% endif %}>Все</option>
+        <option value="music" {% if category == 'music' %}selected{% endif %}>Музыка</option>
+        <option value="Спорт" {% if category == 'Sport' %}selected{% endif %}>Спорт</option>
+        <option value="news" {% if category == 'news' %}selected{% endif %}>Новости</option>
+        <!-- Добавьте больше категорий по мере необходимости -->
     </select>
-    <button type="submit">Filter</button>
+    <button type="submit">Фильтровать</button>
 </form>
 
-<div class="video-list">
+<div class="video-grid">
     {% for video in videos.items %}
     <div class="video-item">
-        <h3>{{ video.title }}</h3>
-        <p>{{ video.description }}</p>
-        <video width="320" height="240" controls>
-            <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">
-            <button type="submit" name="like" value="true">👍</button>
-            <button type="submit" name="like" value="false">👎</button>
-        </form>
+        <div class="video-thumbnail">
+            <video muted>
+                <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+            <div class="video-overlay">
+                <a href="{{ url_for('video_view', video_id=video.id) }}" class="watch-button">Смотреть</a>
+            </div>
+        </div>
+        <div class="video-info">
+            <h3>{{ video.title }}</h3>
+            <p>{{ video.description }}</p>
+            <div class="video-actions">
+                <span>👍 {{ video.likes or 0 }}</span>
+                <span>👎 {{ video.dislikes or 0 }}</span>
+            </div>
+        </div>
     </div>
     {% endfor %}
 </div>
 
 <div class="pagination">
     {% if videos.has_prev %}
-        <a href="{{ url_for('filter_videos', page=videos.prev_num, category=category) }}">Previous</a>
+        <a href="{{ url_for('filter_videos', page=videos.prev_num, category=category) }}" class="pagination-btn">Предыдущие</a>
     {% endif %}
     {% if videos.has_next %}
-        <a href="{{ url_for('filter_videos', page=videos.next_num, category=category) }}">Next</a>
+        <a href="{{ url_for('filter_videos', page=videos.next_num, category=category) }}" class="pagination-btn">Следующие</a>
     {% endif %}
 </div>
 {% endblock %}
