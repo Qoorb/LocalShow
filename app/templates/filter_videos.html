@@ -20,7 +20,7 @@
         <h3>{{ video.title }}</h3>
         <p>{{ video.description }}</p>
         <video width="320" height="240" controls>
-            <source src="{{ video.file_path }}" type="video/mp4">
+            <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">

@@ -5,7 +5,7 @@ from flask_login import LoginManager
 import os
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config.from_object('config.Config')
 
 UPLOAD_FOLDER = os.path.normpath('app\\static\\video')

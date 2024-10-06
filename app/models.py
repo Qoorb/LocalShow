@@ -12,14 +12,14 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.String(500), nullable=True)
-    file_path = db.Column(db.String(200), nullable=False)
+    file_path = db.Column(db.String(200), nullable=False)  # Должен быть относительный путь
     hidden = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(50), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     # Relationship with Rating
-    ratings = db.relationship('Rating', backref='video', lazy='dynamic')
+    ratings = db.relationship('Rating', backref='video', lazy='dynamic', cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='videos')
     
     def __repr__(self):

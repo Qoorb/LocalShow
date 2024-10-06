@@ -95,7 +95,9 @@ def manage_videos():
             db.session.commit()
             flash('Video added successfully!')
         elif 'delete_video' in request.form:
-            video_id = request.form['video_id']
+            video_id = request.form.get('video_id')
+            if not video_id:
+                return "Video ID is required", 400
             video = Video.query.get(video_id)
             if video:
                 db.session.delete(video)
@@ -137,15 +139,17 @@ def add_video():
     if form.validate_on_submit():
         if form.file_path.data and allowed_file(form.file_path.data.filename):
             filename = secure_filename(form.file_path.data.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            # Сохраните файл в директорию static/video
+            file_path = os.path.join('static', 'video', filename)
+            full_path = os.path.join(app.root_path, file_path)
             print(f"file_path: {file_path} and filename: {filename}")
-            form.file_path.data.save(file_path)
+            form.file_path.data.save(full_path)
 
             video = Video(
                 title=form.title.data,
                 description=form.description.data,
-                file_path=file_path,
-                user_id=current_user.id  # Assuming a user_id field in Video model
+                file_path=filename,  # Сохраняем относительный путь
+                user_id=current_user.id
             )
             db.session.add(video)
             db.session.commit()
@@ -153,3 +157,37 @@ def add_video():
             return redirect(url_for('account'))
 
     return render_template('add_video.html', form=form)
+
+@app.route('/admin/ratings', methods=['GET'])
+@login_required
+def admin_ratings():
+    if not current_user.is_admin:
+        flash("You don't have permission to access this page.")
+        return redirect(url_for('index'))
+    
+    ratings = Rating.query.all()
+    return render_template('admin/ratings.html', ratings=ratings)
+
+import json
+from datetime import datetime
+
+def log_action(user_id, action):
+    log_entry = {
+        "user_id": user_id,
+        "action": action,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    with open('user_actions.json', 'a') as log_file:
+        log_file.write(json.dumps(log_entry) + '\n')
+
+@app.route('/admin/logs', methods=['GET'])
+@login_required
+def admin_logs():
+    if not current_user.is_admin:
+        flash("You don't have permission to access this page.")
+        return redirect(url_for('index'))
+    
+    with open('user_actions.json', 'r') as log_file:
+        logs = [json.loads(line) for line in log_file]
+    
+    return render_template('admin/logs.html', logs=logs)
