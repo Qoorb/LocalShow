@@ -18,7 +18,6 @@ class Video(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    # Связь с оценками
     ratings = db.relationship('Rating', backref='video', lazy='dynamic', cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='videos')
     
