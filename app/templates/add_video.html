@@ -1,29 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Добавить Новое Видео</h2>
-    <form method="POST" action="{{ url_for('add_video') }}" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.title.label }}<br>
-            {{ form.title(size=32) }}<br>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Добавить новое видео</h2>
+                <form method="POST" action="{{ url_for('add_video') }}" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows="3") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.category.label(class="form-label") }}
+                        {{ form.category(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.file_path.label(class="form-label") }}
+                        {{ form.file_path(class="form-control") }}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            {{ form.description.label }}<br>
-            {{ form.description(rows=3) }}<br>
-        </div>
-        <div class="form-group">
-            {{ form.category.label }}<br>
-            {{ form.category() }}<br>
-        </div>
-        <div class="form-group">
-            {{ form.file_path.label }}<br>
-            {{ form.file_path() }}<br>
-        </div>
-        <div class="form-group">
-            {{ form.submit(class="btn") }}
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

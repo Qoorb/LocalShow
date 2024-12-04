@@ -1,31 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="video-view-container">
-    <h2>{{ video.title }}</h2>
-    <div class="video-player">
-        <video width="800" height="450" controls>
-            <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
-            Ваш браузер не поддерживает видео.
-        </video>
-    </div>
-    <p>{{ video.description }}</p>
-    
-    <div class="video-rating">
-        <span>Лайки: {{ likes }}</span>
-        <span>Дизлайки: {{ dislikes }}</span>
-        <span>Всего оценок: {{ total_ratings }}</span>
-    </div>
-    
-    <div class="rating-buttons">
-        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST">
-            <button type="submit" name="like" value="true" class="like-btn">👍 Лайк</button>
-            <button type="submit" name="like" value="false" class="dislike-btn">👎 Дизлайк</button>
-        </form>
-    </div>
-    
-    <div class="back-link">
-        <a href="{{ url_for('browse_videos') }}">← Назад к обзору видео</a>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h2 class="mb-4">{{ video.title }}</h2>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <video class="w-100" controls>
+                        <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Описание</h5>
+                    <p class="card-text">{{ video.description }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="video-stats">
+                            <span class="badge bg-success me-2">
+                                <i class="bi bi-hand-thumbs-up"></i> {{ likes }}
+                            </span>
+                            <span class="badge bg-danger me-2">
+                                <i class="bi bi-hand-thumbs-down"></i> {{ dislikes }}
+                            </span>
+                            <span class="badge bg-secondary">
+                                Всего оценок: {{ total_ratings }}
+                            </span>
+                        </div>
+                        
+                        <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST" class="d-flex gap-2">
+                            <button type="submit" name="like" value="true" class="btn btn-outline-success">
+                                <i class="bi bi-hand-thumbs-up"></i> Лайк
+                            </button>
+                            <button type="submit" name="like" value="false" class="btn btn-outline-danger">
+                                <i class="bi bi-hand-thumbs-down"></i> Дизлайк
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="{{ url_for('browse_videos') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад к обзору видео
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

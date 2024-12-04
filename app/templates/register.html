@@ -1,39 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Register</h2>
-    <form method="POST" action="{{ url_for('register') }}">
-        {{ form.hidden_tag() }}
-        <div>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Регистрация</h2>
+                <form method="POST" action="{{ url_for('register') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control") }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control") }}
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.confirm_password.label(class="form-label") }}
+                        {{ form.confirm_password(class="form-control") }}
+                        {% for error in form.confirm_password.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
         </div>
-        <div>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}<br>
-            {% for error in form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.confirm_password.label }}<br>
-            {{ form.confirm_password(size=32) }}><br>
-            {% for error in form.confirm_password.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
+    </div>
+</div>
 {% endblock %}

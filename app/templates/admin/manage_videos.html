@@ -1,31 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Управление Видео (Админ)</h2>
+<div class="container py-4">
+    <h2 class="mb-4">Управление видео (Админ)</h2>
 
-<h3>Добавить Новое Видео</h3>
-<form method="POST" enctype="multipart/form-data">
-    <label for="title">Название:</label>
-    <input type="text" name="title" required>
-    
-    <label for="description">Описание:</label>
-    <textarea name="description" required></textarea>
-    
-    <label for="file_path">Загрузить Видео:</label>
-    <input type="file" name="file_path" accept="video/mp4,video/avi,video/mov" required>
-    
-    <button type="submit" name="add_video">Добавить Видео</button>
-</form>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">Добавить новое видео</h3>
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Название:</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание:</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="file_path" class="form-label">Загрузить видео:</label>
+                            <input type="file" class="form-control" name="file_path" 
+                                   accept="video/mp4,video/avi,video/mov" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" name="add_video" class="btn btn-primary">
+                                Добавить видео
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-<h3>Удалить Видео</h3>
-<form method="POST">
-    <label for="video_id">ID Видео:</label>
-    <select name="video_id" required>
-        {% for video in videos %}
-        <option value="{{ video.id }}">{{ video.id }} - {{ video.title }}</option>
-        {% endfor %}
-    </select>
-    
-    <button type="submit" name="delete_video">Удалить Видео</button>
-</form>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Удалить видео</h3>
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="video_id" class="form-label">Выберите видео:</label>
+                            <select class="form-select" name="video_id" required>
+                                {% for video in videos %}
+                                <option value="{{ video.id }}">{{ video.id }} - {{ video.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" name="delete_video" class="btn btn-danger">
+                                Удалить видео
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
