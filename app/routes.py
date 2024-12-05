@@ -1,6 +1,6 @@
 from flask import (
     request, current_app, render_template,
-    redirect, url_for, flash, abort
+    redirect, url_for, flash, abort, send_file
 )
 from flask_bcrypt import Bcrypt  # type: ignore
 from flask_login import (  # type: ignore
@@ -11,11 +11,14 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import func, case
 
 import os
+import xml.etree.ElementTree as ET
+import json
+import tempfile
 
 from app import app, db
-from app.models import Video, Rating, User, Category, Log
-from app.forms import RegistrationForm, VideoForm, EditProfileForm
 
+from .models import Video, Rating, User, Category, Log
+from .forms import RegistrationForm, VideoForm, EditProfileForm
 from .utils import allowed_file, log_action
 
 
@@ -39,6 +42,7 @@ def filter_videos():
     category_name = request.args.get("category")
     page = request.args.get("page", 1, type=int)
     query = Video.query.filter_by(hidden=False)
+    categories = Category.query.all()
 
     if category_name:
         query = query.join(Video.category).filter(
@@ -49,7 +53,8 @@ def filter_videos():
     return render_template(
         "filter_videos.html",
         videos=videos,
-        category=category_name
+        category=category_name,
+        categories=categories
     )
 
 
@@ -394,6 +399,7 @@ def admin_manage_videos():
         )
         return redirect(url_for("admin_login"))
 
+    form = VideoForm()
     if request.method == "POST":
         if "delete_video" in request.form:
             video_id = request.form.get("video_id")
@@ -417,9 +423,38 @@ def admin_manage_videos():
                 except Exception as e:
                     app.logger.error(f"Ошибка при удалении видео: {e}")
                     flash("Произошла ошибка при удалении видео.", "danger")
+        elif form.validate_on_submit():
+            if (
+                form.file_path.data
+                and allowed_file(form.file_path.data.filename)
+            ):
+                filename = secure_filename(form.file_path.data.filename)
+                file_path = os.path.join("static", "video", filename)
+                full_path = os.path.join(app.root_path, file_path)
+                form.file_path.data.save(full_path)
+
+                video = Video(
+                    title=form.title.data,
+                    description=form.description.data,
+                    file_path=filename,
+                    category_id=form.category.data,
+                    user_id=current_user.id,
+                )
+                db.session.add(video)
+                db.session.commit()
+                log_action(
+                    current_user.id,
+                    f"добавил новое видео: {form.title.data}"
+                )
+                flash("Видео успешно добавлено!", "success")
+                return redirect(url_for("admin_manage_videos"))
 
     videos = Video.query.all()
-    return render_template("admin/manage_videos.html", videos=videos)
+    return render_template(
+        "admin/manage_videos.html",
+        videos=videos,
+        form=form
+    )
 
 
 @app.route("/admin/ratings")
@@ -463,5 +498,67 @@ def admin_logs():
         )
         return redirect(url_for("admin_login"))
 
-    logs = Log.query.order_by(Log.timestamp.desc()).all()
+    page = request.args.get("page", 1, type=int)
+    logs = Log.query.join(User).order_by(Log.timestamp.desc()).paginate(
+        page=page, per_page=50
+    )
     return render_template("admin/logs.html", logs=logs)
+
+
+@app.route("/admin/logs/export/<format>")
+@login_required
+def export_logs(format):
+    if not current_user.is_admin:
+        flash("Доступ запрещен.", "danger")
+        return redirect(url_for("admin_login"))
+
+    logs = Log.query.join(User).order_by(Log.timestamp.desc()).all()
+
+    if format == 'txt':
+        output = '\n'.join([
+            f"[{log.timestamp}] {log.user.username}"
+            f"(ID: {log.user_id}): {log.action}"
+            for log in logs
+        ])
+        mime_type = 'text/plain'
+        filename = 'logs.txt'
+
+    elif format == 'xml':
+        root = ET.Element('logs')
+        for log in logs:
+            log_elem = ET.SubElement(root, 'log')
+            ET.SubElement(
+                log_elem,
+                'timestamp'
+            ).text = log.timestamp.isoformat()
+            ET.SubElement(log_elem, 'username').text = log.user.username
+            ET.SubElement(log_elem, 'user_id').text = str(log.user_id)
+            ET.SubElement(log_elem, 'action').text = log.action
+
+        output = ET.tostring(root, encoding='unicode', method='xml')
+        mime_type = 'application/xml'
+        filename = 'logs.xml'
+
+    elif format == 'json':
+        output = json.dumps([{
+            'timestamp': log.timestamp.isoformat(),
+            'username': log.user.username,
+            'user_id': log.user_id,
+            'action': log.action
+        } for log in logs], ensure_ascii=False, indent=2)
+        mime_type = 'application/json'
+        filename = 'logs.json'
+
+    else:
+        abort(400)
+
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        f.write(output)
+        temp_path = f.name
+
+    return send_file(
+        temp_path,
+        mimetype=mime_type,
+        as_attachment=True,
+        download_name=filename
+    )

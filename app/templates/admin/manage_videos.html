@@ -4,52 +4,50 @@
 <div class="container py-4">
     <h2 class="mb-4">Управление видео</h2>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card mb-4">
                 <div class="card-body">
-                    <h3 class="card-title">Добавить новое видео</h3>
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Название:</label>
-                            <input type="text" class="form-control" name="title" required>
+                    <h3 class="card-title text-center mb-4">Добавить новое видео</h3>
+                    <form method="POST" action="{{ url_for('admin_manage_videos') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="form-floating mb-3">
+                            {{ form.title(class="form-control", placeholder="Название видео") }}
+                            {{ form.title.label(class="form-label") }}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Описание:</label>
-                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        <div class="form-floating mb-3">
+                            {{ form.description(class="form-control", placeholder="Описание", style="height: 100px;") }}
+                            {{ form.description.label(class="form-label") }}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="file_path" class="form-label">Загрузить видео:</label>
-                            <input type="file" class="form-control" name="file_path" 
-                                   accept="video/mp4,video/avi,video/mov" required>
+                        <div class="form-floating mb-3">
+                            {{ form.category(class="form-select", placeholder="Категория") }}
+                            {{ form.category.label(class="form-label") }}
                         </div>
-                        
+                        <div class="mb-3">
+                            {{ form.file_path.label(class="form-label") }}
+                            {{ form.file_path(class="form-control") }}
+                        </div>
                         <div class="d-grid">
-                            <button type="submit" name="add_video" class="btn btn-primary">
-                                Добавить видео
-                            </button>
+                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title">Удалить видео</h3>
+                    <h3 class="card-title text-center mb-4">Удалить видео</h3>
                     <form method="POST">
-                        <div class="mb-3">
-                            <label for="video_id" class="form-label">Выберите видео:</label>
+                        <div class="form-floating mb-3">
                             <select class="form-select" name="video_id" required>
                                 {% for video in videos %}
                                 <option value="{{ video.id }}">{{ video.id }} - {{ video.title }}</option>
                                 {% endfor %}
                             </select>
+                            <label for="video_id" class="form-label">Выберите видео:</label>
                         </div>
-                        
                         <div class="d-grid">
                             <button type="submit" name="delete_video" class="btn btn-danger">
                                 Удалить видео

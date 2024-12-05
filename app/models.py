@@ -16,7 +16,11 @@ class Video(db.Model):
     file_path = db.Column(db.String(100), nullable=False)
     hidden = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey("categories.id"),
+        nullable=False
+    )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     ratings = db.relationship(
@@ -43,16 +47,21 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
     password_hash = db.Column(db.String(128), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow
+    )
     is_admin = db.Column(db.Boolean, default=False)
 
-    # Relationship with Rating and Log
     ratings = db.relationship("Rating", backref="user", lazy="dynamic")
     videos = db.relationship("Video", back_populates="user", lazy="dynamic")
     logs = db.relationship("Log", backref="user", lazy="dynamic")
 
     def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+        self.password_hash = bcrypt.generate_password_hash(
+            password
+        ).decode("utf-8")
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
@@ -65,13 +74,20 @@ class Rating(db.Model):
     __tablename__ = "ratings"
 
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey("videos.id"), nullable=False)
+    video_id = db.Column(
+        db.Integer,
+        db.ForeignKey("videos.id"),
+        nullable=False
+    )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     like = db.Column(db.Boolean, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"<Rating Video ID: {self.video_id}, User ID: {self.user_id}, Like: {self.like}>"
+        return (
+            f"<Rating Video ID: {self.video_id},"
+            f"User ID: {self.user_id}, Like: {self.like}>"
+        )
 
 
 class Log(db.Model):

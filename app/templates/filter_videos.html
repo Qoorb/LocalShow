@@ -11,11 +11,9 @@
                     <label for="category" class="form-label">Категория:</label>
                     <select name="category" id="category" class="form-select">
                         <option value="" {% if not category %}selected{% endif %}>Все</option>
-                        <option value="Музыка" {% if category == 'Музыка' %}selected{% endif %}>Музыка</option>
-                        <option value="Спорт" {% if category == 'Спорт' %}selected{% endif %}>Спорт</option>
-                        <option value="Новости" {% if category == 'Новости' %}selected{% endif %}>Новости</option>
-                        <option value="Развлечения" {% if category == 'Развлечения' %}selected{% endif %}>Развлечения</option>
-                        <option value="Образование" {% if category == 'Образование' %}selected{% endif %}>Образование</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.name }}" {% if category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -45,6 +43,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ video.title }}</h5>
                     <p class="card-text">{{ video.description }}</p>
+                    <p class="card-text"><small class="text-muted">Категория: {{ video.category.name }}</small></p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="me-3"><i class="bi bi-hand-thumbs-up"></i> {{ video.likes or 0 }}</span>
@@ -61,16 +60,12 @@
         <ul class="pagination justify-content-center">
             {% if videos.has_prev %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('filter_videos', page=videos.prev_num, category=category) }}">
-                    Предыдущие
-                </a>
+                <a class="page-link" href="{{ url_for('filter_videos', page=videos.prev_num, category=category) }}">Предыдущие</a>
             </li>
             {% endif %}
             {% if videos.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('filter_videos', page=videos.next_num, category=category) }}">
-                    Следующие
-                </a>
+                <a class="page-link" href="{{ url_for('filter_videos', page=videos.next_num, category=category) }}">Следующие</a>
             </li>
             {% endif %}
         </ul>

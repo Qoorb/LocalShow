@@ -20,14 +20,14 @@ from app.models import User, Category
 
 class RegistrationForm(FlaskForm):
     username = StringField(
-        "Username", validators=[DataRequired(), Length(min=2, max=20)]
+        "Имя пользователя", validators=[DataRequired(), Length(min=2, max=20)]
     )
     email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Password", validators=[DataRequired()])
+    password = PasswordField("Пароль", validators=[DataRequired()])
     confirm_password = PasswordField(
-        "Confirm Password", validators=[DataRequired(), EqualTo("password")]
+        "Подтвердите пароль", validators=[DataRequired(), EqualTo("password")]
     )
-    submit = SubmitField("Sign Up")
+    submit = SubmitField("Зарегистрироваться")
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
-from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate  # type: ignore
+from flask_login import LoginManager  # type: ignore
+from flask_bcrypt import Bcrypt  # type: ignore
 import os
 
 
@@ -24,7 +24,7 @@ login_manager.login_view = "login"
 admin_login_manager = LoginManager(app)
 admin_login_manager.login_view = "admin_login"
 
-from app.models import User
+from .models import User
 
 
 @login_manager.user_loader
