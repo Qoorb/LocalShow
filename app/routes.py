@@ -389,100 +389,75 @@ def admin_videos():
     return render_template("admin/admin_videos.html", videos=videos)
 
 
-@app.route("/admin/videos/manage", methods=["GET", "POST"])
+@app.route("/admin/manage_videos", methods=["GET", "POST"])
 @login_required
 def admin_manage_videos():
     if not current_user.is_admin:
-        flash(
-            "Доступ запрещен. Пожалуйста, войдите как администратор.",
-            "danger"
-        )
+        flash("Доступ запрещен. Пожалуйста, войдите как администратор.", "danger")
         return redirect(url_for("admin_login"))
 
     form = VideoForm()
-    if request.method == "POST":
-        if "delete_video" in request.form:
-            video_id = request.form.get("video_id")
-            if not video_id:
-                flash("Не указан ID видео для удаления.", "danger")
-                return redirect(url_for("admin_manage_videos"))
+    if form.validate_on_submit():
+        if form.file_path.data and allowed_file(form.file_path.data.filename):
+            filename = secure_filename(form.file_path.data.filename)
+            file_path = os.path.join("static", "video", filename)
+            full_path = os.path.join(app.root_path, file_path)
+            form.file_path.data.save(full_path)
 
-            video = Video.query.get(video_id)
-            if video:
-                try:
-                    file_path = os.path.join(
-                        current_app.config["UPLOAD_FOLDER"], video.file_path
-                    )
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
-                    video_title = video.title
-                    db.session.delete(video)
-                    db.session.commit()
-                    log_action(current_user.id, f"удалил видео: {video_title}")
-                    flash("Видео успешно удалено!", "success")
-                except Exception as e:
-                    app.logger.error(f"Ошибка при удалении видео: {e}")
-                    flash("Произошла ошибка при удалении видео.", "danger")
-        elif form.validate_on_submit():
-            if (
-                form.file_path.data
-                and allowed_file(form.file_path.data.filename)
-            ):
-                filename = secure_filename(form.file_path.data.filename)
-                file_path = os.path.join("static", "video", filename)
-                full_path = os.path.join(app.root_path, file_path)
-                form.file_path.data.save(full_path)
+            video = Video(
+                title=form.title.data,
+                description=form.description.data,
+                file_path=filename,
+                category_id=form.category.data,
+                user_id=current_user.id,
+            )
+            db.session.add(video)
+            db.session.commit()
+            log_action(current_user.id, f"добавил новое видео: {form.title.data}")
+            flash("Видео успешно добавлено!", "success")
+            return redirect(url_for("admin_manage_videos"))
 
-                video = Video(
-                    title=form.title.data,
-                    description=form.description.data,
-                    file_path=filename,
-                    category_id=form.category.data,
-                    user_id=current_user.id,
-                )
-                db.session.add(video)
-                db.session.commit()
-                log_action(
-                    current_user.id,
-                    f"добавил новое видео: {form.title.data}"
-                )
-                flash("Видео успешно добавлено!", "success")
-                return redirect(url_for("admin_manage_videos"))
-
-    videos = Video.query.all()
-    return render_template(
-        "admin/manage_videos.html",
-        videos=videos,
-        form=form
-    )
+    return render_template("admin/manage_videos.html", form=form)
 
 
-@app.route("/admin/ratings")
+@app.route("/admin/ratings", methods=["GET"])
 @login_required
 def admin_ratings():
     if not current_user.is_admin:
-        flash(
-            "Доступ запрещен. Пожалуйста, войдите как администратор.",
-            "danger"
-        )
+        flash("Доступ запрещен. Пожалуйста, войдите как администратор.", "danger")
         return redirect(url_for("admin_login"))
-    try:
-        ratings = (
-            db.session.query(
-                Video.id,
-                Video.title,
-                func.count(Rating.id).label("total_ratings"),
-                func.sum(case((Rating.like.is_(True), 1), else_=0))
-                .label("likes"),
-                func.sum(case((Rating.like.is_(False), 1), else_=0))
-                .label("dislikes"),
-            )
-            .outerjoin(Rating)
-            .group_by(Video.id, Video.title)
-            .all()
-        )
 
-        return render_template("admin/ratings.html", ratings=ratings)
+    sort_by = request.args.get("sort_by", "total_ratings")  # По умолчанию сортируем по total_ratings
+    sort_order = request.args.get("sort_order", "desc")  # По умолчанию по убыванию
+    page = request.args.get("page", 1, type=int)  # Параметр для пагинации
+
+    try:
+        query = db.session.query(
+            Video.id,
+            Video.title,
+            func.count(Rating.id).label("total_ratings"),
+            func.sum(case((Rating.like.is_(True), 1), else_=0)).label("likes"),
+            func.sum(case((Rating.like.is_(False), 1), else_=0)).label("dislikes"),
+        ).outerjoin(Rating).group_by(Video.id, Video.title)
+
+        # Добавляем сортировку
+        if sort_by == "total_ratings":
+            if sort_order == "asc":
+                query = query.order_by(func.count(Rating.id).asc())
+            else:
+                query = query.order_by(func.count(Rating.id).desc())
+        elif sort_by in ['id', 'title']:
+            if sort_order == "asc":
+                query = query.order_by(getattr(Video, sort_by).asc())
+            else:
+                query = query.order_by(getattr(Video, sort_by).desc())
+        else:
+            query = query.order_by(func.count(Rating.id).desc())
+
+        # Пагинация
+        ratings = query.paginate(page=page, per_page=10)  # Установите нужное количество элементов на странице
+
+        return render_template("admin/ratings.html", ratings=ratings.items, sort_by=sort_by, sort_order=sort_order, page=page)
     except Exception as e:
         app.logger.error(f"Error fetching ratings: {e}")
         return "Internal Server Error", 500
@@ -561,4 +536,75 @@ def export_logs(format):
         mimetype=mime_type,
         as_attachment=True,
         download_name=filename
+    )
+
+
+@app.route("/admin/videos/<int:video_id>/edit", methods=["GET", "POST"])
+@login_required
+def admin_edit_video(video_id):
+    if not current_user.is_admin:
+        flash("Доступ запрещен. Пожалуйста, войдите как администратор.", "danger")
+        return redirect(url_for("admin_login"))
+
+    video = Video.query.get_or_404(video_id)
+    form = VideoForm()
+
+    if form.validate_on_submit():
+        video.title = form.title.data
+        video.description = form.description.data
+        video.category_id = form.category.data
+        db.session.commit()
+        log_action(current_user.id, f"отредактировал видео: {video.title}")
+        flash("Видео успешно обновлено!", "success")
+        return redirect(url_for("admin_videos"))
+
+    elif request.method == "GET":
+        form.title.data = video.title
+        form.description.data = video.description
+        form.category.data = video.category_id
+
+    return render_template("admin/edit_video.html", form=form, video=video)
+
+
+@app.route("/admin/videos/<int:video_id>/view")
+@login_required
+def admin_view_video(video_id):
+    if not current_user.is_admin:
+        flash("Доступ запрещен. Пожалуйста, войдите как администратор.", "danger")
+        return redirect(url_for("admin_login"))
+
+    video = Video.query.get_or_404(video_id)
+    
+    # Получаем статистику оценок
+    ratings = (
+        db.session.query(
+            func.count(Rating.id).label("total_ratings"),
+            func.sum(case((Rating.like.is_(True), 1), else_=0)).label("likes"),
+            func.sum(case((Rating.like.is_(False), 1), else_=0)).label("dislikes"),
+        )
+        .filter_by(video_id=video_id)
+        .first()
+    )
+    
+    # Получаем информацию о пользователе, загрузившем видео
+    uploader = User.query.get(video.user_id)
+    
+    # Получаем последние 10 оценок для этого видео
+    recent_ratings = (
+        Rating.query
+        .join(User)
+        .filter(Rating.video_id == video_id)
+        .order_by(Rating.timestamp.desc())
+        .limit(10)
+        .all()
+    )
+
+    return render_template(
+        "admin/view_video.html",
+        video=video,
+        uploader=uploader,
+        total_ratings=ratings.total_ratings or 0,
+        likes=ratings.likes or 0,
+        dislikes=ratings.dislikes or 0,
+        recent_ratings=recent_ratings
     )

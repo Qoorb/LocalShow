@@ -8,9 +8,30 @@
             <table class="table table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID Видео</th>
-                        <th>Название видео</th>
-                        <th>Всего оценок</th>
+                        <th>
+                            <a href="{{ url_for('admin_ratings', sort_by='id', sort_order='asc' if sort_by == 'id' and sort_order == 'desc' else 'desc') }}">
+                                ID Видео
+                                {% if sort_by == 'id' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ url_for('admin_ratings', sort_by='title', sort_order='asc' if sort_by == 'title' and sort_order == 'desc' else 'desc') }}">
+                                Название видео
+                                {% if sort_by == 'title' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ url_for('admin_ratings', sort_by='total_ratings', sort_order='asc' if sort_by == 'total_ratings' and sort_order == 'desc' else 'desc') }}">
+                                Всего оценок
+                                {% if sort_by == 'total_ratings' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th>Лайки</th>
                         <th>Дизлайки</th>
                     </tr>
@@ -36,6 +57,21 @@
                 </tbody>
             </table>
         </div>
+
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if ratings.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_ratings', page=ratings.prev_num, sort_by=sort_by, sort_order=sort_order) }}">Предыдущая</a>
+                </li>
+                {% endif %}
+                {% if ratings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_ratings', page=ratings.next_num, sort_by=sort_by, sort_order=sort_order) }}">Следующая</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 </div>
 {% endblock %}

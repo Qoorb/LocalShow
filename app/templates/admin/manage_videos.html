@@ -2,13 +2,11 @@
 
 {% block content %}
 <div class="container py-4">
-    <h2 class="mb-4">Управление видео</h2>
-
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h3 class="card-title text-center mb-4">Добавить новое видео</h3>
+                    <h2 class="card-title text-center mb-4">Добавить видео</h2>
                     <form method="POST" action="{{ url_for('admin_manage_videos') }}" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="form-floating mb-3">
@@ -29,29 +27,6 @@
                         </div>
                         <div class="d-grid">
                             {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-8 col-lg-6">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title text-center mb-4">Удалить видео</h3>
-                    <form method="POST">
-                        <div class="form-floating mb-3">
-                            <select class="form-select" name="video_id" required>
-                                {% for video in videos %}
-                                <option value="{{ video.id }}">{{ video.id }} - {{ video.title }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="video_id" class="form-label">Выберите видео:</label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" name="delete_video" class="btn btn-danger">
-                                Удалить видео
-                            </button>
                         </div>
                     </form>
                 </div>
