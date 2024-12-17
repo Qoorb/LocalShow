@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Просмотр каталога</h2>
+        
+        <!-- Форма поиска -->
+        <form method="GET" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ request.args.get('title', '') }}" placeholder="Название">
+                        <label for="title">Название</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="description" name="description" 
+                               value="{{ request.args.get('description', '') }}" placeholder="Описание">
+                        <label for="description">Описание</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" name="username" 
+                               value="{{ request.args.get('username', '') }}" placeholder="Пользователь">
+                        <label for="username">Пользователь</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Поиск
+                        </button>
+                        <a href="{{ url_for('admin.admin_videos') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Сбросить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th>Пользователь</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for video in videos %}
+                    <tr>
+                        <td>{{ video.title }}</td>
+                        <td>{{ video.description }}</td>
+                        <td>{{ video.user.username }}</td>
+                        <td>
+                            <span class="badge {% if video.hidden %}bg-danger{% else %}bg-success{% endif %}">
+                                {{ 'Скрыто' if video.hidden else 'Отображается' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <form method="POST" action="{{ url_for('admin.admin_videos') }}" class="d-inline">
+                                    <input type="hidden" name="video_id" value="{{ video.id }}">
+                                    <button type="submit" class="btn btn-sm {% if video.hidden %}btn-success{% else %}btn-warning{% endif %}">
+                                        {{ 'Показать' if video.hidden else 'Скрыть' }}
+                                    </button>
+                                </form>
+                                <a href="{{ url_for('admin.admin_view_video', video_id=video.id) }}" class="btn btn-sm btn-info ms-1">
+                                    <i class="bi bi-play"></i> Смотреть
+                                </a>
+                                <a href="{{ url_for('admin.admin_edit_video', video_id=video.id) }}" class="btn btn-sm btn-primary ms-1">
+                                    <i class="bi bi-pencil"></i> Редактировать
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ video.id }}">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% for video in videos %}
+<div class="modal fade" id="deleteModal{{ video.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить видео "{{ video.title }}"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form action="{{ url_for('video.delete_video', video_id=video.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

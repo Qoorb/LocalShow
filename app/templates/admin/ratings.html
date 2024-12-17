@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Рейтинги видео</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            <a href="{{ url_for('admin.admin_ratings', sort_by='id', sort_order='asc' if sort_by == 'id' and sort_order == 'desc' else 'desc') }}">
+                                ID Видео
+                                {% if sort_by == 'id' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ url_for('admin.admin_ratings', sort_by='title', sort_order='asc' if sort_by == 'title' and sort_order == 'desc' else 'desc') }}">
+                                Название видео
+                                {% if sort_by == 'title' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ url_for('admin.admin_ratings', sort_by='total_ratings', sort_order='asc' if sort_by == 'total_ratings' and sort_order == 'desc' else 'desc') }}">
+                                Всего оценок
+                                {% if sort_by == 'total_ratings' %}
+                                    <i class="bi {% if sort_order == 'asc' %}bi-arrow-up{% else %}bi-arrow-down{% endif %}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>Лайки</th>
+                        <th>Дизлайки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rating in ratings %}
+                    <tr>
+                        <td>{{ rating.id }}</td>
+                        <td>{{ rating.title }}</td>
+                        <td>{{ rating.total_ratings or 0 }}</td>
+                        <td>
+                            <span class="badge bg-success">
+                                <i class="bi bi-hand-thumbs-up"></i> {{ rating.likes or 0 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-danger">
+                                <i class="bi bi-hand-thumbs-down"></i> {{ rating.dislikes or 0 }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if ratings.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.admin_ratings', page=ratings.prev_num, sort_by=sort_by, sort_order=sort_order) }}">Предыдущая</a>
+                </li>
+                {% endif %}
+                {% if ratings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.admin_ratings', page=ratings.next_num, sort_by=sort_by, sort_order=sort_order) }}">Следующая</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-light p-3 rounded shadow-sm mb-4">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('admin.admin_dashboard') }}" class="text-decoration-none">
+                            <i class="bi bi-house-door"></i> Панель управления
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('admin.admin_videos') }}" class="text-decoration-none">
+                            <i class="bi bi-collection-play"></i> Просмотр видео
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="bi bi-play-circle"></i> {{ video.title }}
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <video class="w-100" controls>
+                        <source src="{{ url_for('static', filename='video/' + video.file_path) }}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <!-- Заголовок -->
+                            <div class="border-bottom pb-3 mb-4">
+                                <h3 class="card-title mb-2">{{ video.title }}</h3>
+                                <p class="text-muted mb-0">
+                                    <i class="bi bi-calendar3"></i> Загружено: {{ video.created_at.strftime('%d.%m.%Y %H:%M') }}
+                                </p>
+                            </div>
+
+                            <!-- Описание -->
+                            <div class="border-bottom pb-3 mb-4">
+                                <h5 class="text-secondary mb-3">
+                                    <i class="bi bi-card-text"></i> Описание
+                                </h5>
+                                <p class="card-text">{{ video.description }}</p>
+                            </div>
+                            
+                            <!-- Информация о пользователе -->
+                            <div>
+                                <h5 class="text-secondary mb-3">
+                                    <i class="bi bi-person"></i> Информация о загрузившем
+                                </h5>
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-0">
+                                        <strong>Пользователь:</strong> {{ uploader.username }}<br>
+                                        <strong>Email:</strong> {{ uploader.email }}<br>
+                                        <strong>Дата регистрации:</strong> {{ uploader.created_at.strftime('%d.%m.%Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Статистика</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-success">
+                                    <i class="bi bi-hand-thumbs-up"></i> {{ likes }}
+                                </span>
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-hand-thumbs-down"></i> {{ dislikes }}
+                                </span>
+                                <span class="badge bg-secondary">
+                                    Всего оценок: {{ total_ratings }}
+                                </span>
+                            </div>
+
+                            <h6 class="mt-4">Последние оценки</h6>
+                            <div class="list-group list-group-flush">
+                                {% for rating in recent_ratings %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small>{{ rating.user.username }}</small>
+                                        <span class="badge {% if rating.like %}bg-success{% else %}bg-danger{% endif %}">
+                                            <i class="bi bi-hand-thumbs-{% if rating.like %}up{% else %}down{% endif %}"></i>
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">{{ rating.timestamp.strftime('%d.%m.%Y %H:%M') }}</small>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <form method="POST" action="{{ url_for('admin.admin_videos') }}" class="d-grid">
+                            <input type="hidden" name="video_id" value="{{ video.id }}">
+                            <button type="submit" class="btn {% if video.hidden %}btn-success{% else %}btn-warning{% endif %}">
+                                <i class="bi {% if video.hidden %}bi-eye{% else %}bi-eye-slash{% endif %}"></i>
+                                {{ 'Показать' if video.hidden else 'Скрыть' }}
+                            </button>
+                        </form>
+                        <a href="{{ url_for('admin.admin_edit_video', video_id=video.id) }}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить видео "{{ video.title }}"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form action="{{ url_for('video.delete_video', video_id=video.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Добавить видео</h2>
+                    <form method="POST" action="{{ url_for('admin.admin_manage_videos') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="form-floating mb-3">
+                            {{ form.title(class="form-control", placeholder="Название видео") }}
+                            {{ form.title.label(class="form-label") }}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{ form.description(class="form-control", placeholder="Описание", style="height: 100px;") }}
+                            {{ form.description.label(class="form-label") }}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{ form.category(class="form-select", placeholder="Категория") }}
+                            {{ form.category.label(class="form-label") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.file_path.label(class="form-label") }}
+                            {{ form.file_path(class="form-control") }}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
