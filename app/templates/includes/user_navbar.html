@@ -1,16 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}">VideoLib</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">VideoLib</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('browse_videos') }}">Каталог</a>
+                    <a class="nav-link" href="{{ url_for('main.browse_videos') }}">Каталог</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('filter_videos') }}">Фильтр</a>
+                    <a class="nav-link" href="{{ url_for('main.filter_videos') }}">Фильтр</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
@@ -21,18 +21,18 @@
                             {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('account') }}">Мой профиль</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('add_video') }}">Добавить видео</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('profile.account') }}">Мой профиль</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('video.add_video') }}">Добавить видео</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Выйти</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выйти</a></li>
                         </ul>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Войти</a>
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Войти</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Регистрация</a>
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">Регистрация</a>
                     </li>
                 {% endif %}
             </ul>

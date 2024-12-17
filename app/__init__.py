@@ -37,4 +37,19 @@ def load_admin_user(user_id):
     return User.query.get(int(user_id))
 
 
-from app import routes, models
+from app import models
+
+from app.main import bp as main_bp
+app.register_blueprint(main_bp)
+
+from app.auth import bp as auth_bp
+app.register_blueprint(auth_bp)
+
+from app.profile import bp as profile_bp
+app.register_blueprint(profile_bp)
+
+from app.video import bp as video_bp
+app.register_blueprint(video_bp)
+
+from app.admin import bp as admin_bp
+app.register_blueprint(admin_bp)

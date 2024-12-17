@@ -9,10 +9,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Управление видео</h5>
                     <div class="list-group">
-                        <a href="{{ url_for('admin_videos') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ url_for('admin.admin_videos') }}" class="list-group-item list-group-item-action">
                             Просмотр каталога
                         </a>
-                        <a href="{{ url_for('admin_manage_videos') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ url_for('admin.admin_manage_videos') }}" class="list-group-item list-group-item-action">
                             Добавить видео
                         </a>
                     </div>
@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Статистика</h5>
                     <div class="list-group">
-                        <a href="{{ url_for('admin_ratings') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ url_for('admin.admin_ratings') }}" class="list-group-item list-group-item-action">
                             Рейтинги
                         </a>
                     </div>
@@ -38,7 +38,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Система</h5>
                     <div class="list-group">
-                        <a href="{{ url_for('admin_logs') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ url_for('admin.admin_logs') }}" class="list-group-item list-group-item-action">
                             Журнал действий
                         </a>
                     </div>

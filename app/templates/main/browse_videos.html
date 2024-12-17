@@ -15,7 +15,7 @@
                      style="background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;"
                      onmouseover="this.style.opacity=1" 
                      onmouseout="this.style.opacity=0">
-                    <a href="{{ url_for('video_view', video_id=video.id) }}" 
+                    <a href="{{ url_for('video.video_view', video_id=video.id) }}" 
                        class="btn btn-danger">Смотреть</a>
                 </div>
             </div>
@@ -39,12 +39,12 @@
     <ul class="pagination justify-content-center">
         {% if videos.has_prev %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('browse_videos', page=videos.prev_num) }}">Предыдущие</a>
+            <a class="page-link" href="{{ url_for('main.browse_videos', page=videos.prev_num) }}">Предыдущие</a>
         </li>
         {% endif %}
         {% if videos.has_next %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('browse_videos', page=videos.next_num) }}">Следующие</a>
+            <a class="page-link" href="{{ url_for('main.browse_videos', page=videos.next_num) }}">Следующие</a>
         </li>
         {% endif %}
     </ul>

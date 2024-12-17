@@ -10,9 +10,9 @@
                     Экспорт
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ url_for('export_logs', format='txt') }}">TXT</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('export_logs', format='xml') }}">XML</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('export_logs', format='json') }}">JSON</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin.export_logs', format='txt') }}">TXT</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin.export_logs', format='xml') }}">XML</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin.export_logs', format='json') }}">JSON</a></li>
                 </ul>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <ul class="pagination justify-content-center">
                 {% if logs.has_prev %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin_logs', page=logs.prev_num) }}">
+                    <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.prev_num) }}">
                         Предыдущие
                     </a>
                 </li>
@@ -58,7 +58,7 @@
                 
                 {% if logs.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin_logs', page=logs.next_num) }}">
+                    <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.next_num) }}">
                         Следующие
                     </a>
                 </li>

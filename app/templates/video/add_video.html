@@ -6,7 +6,7 @@
         <div class="card shadow">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Добавить новое видео</h2>
-                <form method="POST" action="{{ url_for('add_video') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ url_for('video.add_video') }}" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
                         {{ form.title.label(class="form-label") }}

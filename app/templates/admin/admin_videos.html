@@ -34,7 +34,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search"></i> Поиск
                         </button>
-                        <a href="{{ url_for('admin_videos') }}" class="btn btn-secondary">
+                        <a href="{{ url_for('admin.admin_videos') }}" class="btn btn-secondary">
                             <i class="bi bi-x-circle"></i> Сбросить
                         </a>
                     </div>
@@ -66,16 +66,16 @@
                         </td>
                         <td>
                             <div class="btn-group">
-                                <form method="POST" action="{{ url_for('admin_videos') }}" class="d-inline">
+                                <form method="POST" action="{{ url_for('admin.admin_videos') }}" class="d-inline">
                                     <input type="hidden" name="video_id" value="{{ video.id }}">
                                     <button type="submit" class="btn btn-sm {% if video.hidden %}btn-success{% else %}btn-warning{% endif %}">
                                         {{ 'Показать' if video.hidden else 'Скрыть' }}
                                     </button>
                                 </form>
-                                <a href="{{ url_for('admin_view_video', video_id=video.id) }}" class="btn btn-sm btn-info ms-1">
+                                <a href="{{ url_for('admin.admin_view_video', video_id=video.id) }}" class="btn btn-sm btn-info ms-1">
                                     <i class="bi bi-play"></i> Смотреть
                                 </a>
-                                <a href="{{ url_for('admin_edit_video', video_id=video.id) }}" class="btn btn-sm btn-primary ms-1">
+                                <a href="{{ url_for('admin.admin_edit_video', video_id=video.id) }}" class="btn btn-sm btn-primary ms-1">
                                     <i class="bi bi-pencil"></i> Редактировать
                                 </a>
                                 <button type="button" class="btn btn-sm btn-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ video.id }}">
@@ -104,7 +104,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <form action="{{ url_for('delete_video', video_id=video.id) }}" method="POST" class="d-inline">
+                <form action="{{ url_for('video.delete_video', video_id=video.id) }}" method="POST" class="d-inline">
                     <button type="submit" class="btn btn-danger">Удалить</button>
                 </form>
             </div>

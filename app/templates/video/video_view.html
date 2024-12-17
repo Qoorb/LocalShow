@@ -33,7 +33,7 @@
                                 </span>
                             </div>
                             
-                            <form action="{{ url_for('rate_video', video_id=video.id) }}" method="POST" class="d-flex gap-2">
+                            <form action="{{ url_for('video.video_view', video_id=video.id) }}/rate" method="POST" class="d-flex gap-2">
                                 <button type="submit" name="like" value="true" 
                                         class="btn btn-outline-success {% if user_rating and user_rating.like %}active{% endif %}">
                                     <i class="bi bi-hand-thumbs-up"></i> Лайк
@@ -62,7 +62,7 @@
             </div>
 
             <div class="text-center">
-                <a href="{{ url_for('browse_videos') }}" class="btn btn-secondary">
+                <a href="{{ url_for('main.browse_videos') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Назад к обзору видео
                 </a>
             </div>
