@@ -369,23 +369,44 @@ def admin_dashboard():
 @login_required
 def admin_videos():
     if not current_user.is_admin:
-        flash(
-            "Доступ запрещен. Пожалуйста, войдите как администратор.",
-            "danger"
-        )
+        flash("Доступ запрещен. Пожалуйста, войдите как администратор.", "danger")
         return redirect(url_for("admin_login"))
 
+    # Получаем параметры поиска
+    title = request.args.get('title', '').strip()
+    description = request.args.get('description', '').strip()
+    username = request.args.get('username', '').strip()
+
+    # Базовый запрос
+    query = Video.query.join(User)
+
+    # Применяем фильтры поиска
+    if title:
+        query = query.filter(Video.title.ilike(f'%{title}%'))
+    if description:
+        query = query.filter(Video.description.ilike(f'%{description}%'))
+    if username:
+        query = query.filter(User.username.ilike(f'%{username}%'))
+
+    # Обработка POST запроса для скрытия/показа видео
     if request.method == "POST":
         video_id = request.form.get("video_id")
-        video = Video.query.get(video_id)
-        if video:
+        if video_id:
+            video = Video.query.get_or_404(video_id)
             video.hidden = not video.hidden
             db.session.commit()
-            flash(f'Статус видео "{video.title}" обновлен.', "success")
-        else:
-            flash("Видео не найдено.", "danger")
+            flash(
+                f"Видео {'скрыто' if video.hidden else 'показано'}.", 
+                "success"
+            )
+            return redirect(url_for("admin_videos"))
 
-    videos = Video.query.all()
+    # Получаем страницу и сортировку
+    page = request.args.get('page', 1, type=int)
+    videos = query.order_by(Video.created_at.desc()).paginate(
+        page=page, per_page=10
+    )
+
     return render_template("admin/admin_videos.html", videos=videos)
 
 
@@ -574,8 +595,7 @@ def admin_view_video(video_id):
         return redirect(url_for("admin_login"))
 
     video = Video.query.get_or_404(video_id)
-    
-    # Получаем статистику оценок
+
     ratings = (
         db.session.query(
             func.count(Rating.id).label("total_ratings"),
@@ -585,11 +605,9 @@ def admin_view_video(video_id):
         .filter_by(video_id=video_id)
         .first()
     )
-    
-    # Получаем информацию о пользователе, загрузившем видео
+
     uploader = User.query.get(video.user_id)
-    
-    # Получаем последние 10 оценок для этого видео
+
     recent_ratings = (
         Rating.query
         .join(User)
