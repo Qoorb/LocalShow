@@ -4,7 +4,7 @@ from flask import (
 )
 from flask_bcrypt import Bcrypt  # type: ignore
 from flask_login import (  # type: ignore
-    current_user, login_user,
+    current_user, login_user, LoginManager,
     logout_user, login_required
 )
 
@@ -14,6 +14,15 @@ from app.models import User
 from app.utils import log_action
 
 from .forms import RegistrationForm
+
+
+login_manager = LoginManager()
+login_manager.login_view = "auth.login"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 @bp.route("/login", methods=["GET", "POST"])
