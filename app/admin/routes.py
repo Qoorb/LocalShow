@@ -1,10 +1,10 @@
 from flask import (
     request, render_template,
-    redirect, url_for, flash, abort, send_file
+    redirect, url_for, flash, abort, send_file, current_app
 )
 from flask_login import (  # type: ignore
     current_user, login_user,
-    login_required
+    login_required, LoginManager
 )
 from werkzeug.utils import secure_filename
 from sqlalchemy import func, case
@@ -14,11 +14,20 @@ import xml.etree.ElementTree as ET
 import json
 import tempfile
 
-from app import app, db
+from app import db
 from app.admin import bp
 from app.models import Video, Rating, User, Log
 from app.video.forms import VideoForm
 from app.utils import allowed_file, log_action
+
+
+admin_login_manager = LoginManager()
+admin_login_manager.login_view = "admin.admin_login"
+
+
+@admin_login_manager.user_loader
+def load_admin_user(user_id):
+    return User.query.get(int(user_id))
 
 
 @bp.route("/admin/login", methods=["GET", "POST"])
@@ -118,7 +127,7 @@ def admin_manage_videos():
         if form.file_path.data and allowed_file(form.file_path.data.filename):
             filename = secure_filename(form.file_path.data.filename)
             file_path = os.path.join("static", "video", filename)
-            full_path = os.path.join(app.root_path, file_path)
+            full_path = os.path.join(current_app.root_path, file_path)
             form.file_path.data.save(full_path)
 
             video = Video(
@@ -190,7 +199,7 @@ def admin_ratings():
             page=page
         )
     except Exception as e:
-        app.logger.error(f"Error fetching ratings: {e}")
+        current_app.logger.error(f"Error fetching ratings: {e}")
         return "Internal Server Error", 500
 
 

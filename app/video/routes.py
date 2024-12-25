@@ -8,7 +8,7 @@ from sqlalchemy import func, case
 
 import os
 
-from app import db, app
+from app import db
 from app.video import bp
 from app.models import Video, Rating
 from app.utils import allowed_file, log_action
@@ -119,7 +119,7 @@ def delete_video(video_id):
         db.session.commit()
         flash("Видео успешно удалено!", "success")
     except Exception as e:
-        app.logger.error(f"Ошибка при удалении видео: {e}")
+        current_app.logger.error(f"Ошибка при удалении видео: {e}")
         flash("Произошла ошибка при удалении видео.", "danger")
     return redirect(url_for("profile.account"))
 
@@ -160,7 +160,7 @@ def add_video():
         if form.file_path.data and allowed_file(form.file_path.data.filename):
             filename = secure_filename(form.file_path.data.filename)
             file_path = os.path.join("static", "video", filename)
-            full_path = os.path.join(app.root_path, file_path)
+            full_path = os.path.join(current_app.root_path, file_path)
             form.file_path.data.save(full_path)
 
             video = Video(
